@@ -1,6 +1,6 @@
 import unittest
 from flask import current_app, json
-from emis_query_executor import create_app
+from query_executor import create_app
 
 
 class ApiTest(unittest.TestCase):
