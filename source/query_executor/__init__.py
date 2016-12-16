@@ -10,20 +10,6 @@ class QueryExecutor(object):
 
     def __init__(self):
         self.config = Config(__name__)
-        self.credentials = pika.PlainCredentials("blah", "blih")
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host="rabbitmq",
-            credentials=self.credentials,
-            # Keep trying for 8 minutes.
-            connection_attempts=100,
-            retry_delay=5  # Seconds
-        ))
-        self.channel = self.connection.channel()
-        self.channel.queue_declare(
-            queue="execute_query")
-        self.channel.basic_consume(
-            self.on_message,
-            queue="execute_query")
 
 
     # def properties_uri(self,
@@ -118,6 +104,25 @@ class QueryExecutor(object):
 
     def run(self,
             host):
+
+        self.credentials = pika.PlainCredentials(
+            self.config["EMIS_RABBITMQ_DEFAULT_USER"],
+            self.config["EMIS_RABBITMQ_DEFAULT_PASS"]
+        )
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host="rabbitmq",
+            virtual_host=self.config["EMIS_RABBITMQ_DEFAULT_VHOST"],
+            credentials=self.credentials,
+            # Keep trying for 8 minutes.
+            connection_attempts=100,
+            retry_delay=5  # Seconds
+        ))
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(
+            queue="execute_query")
+        self.channel.basic_consume(
+            self.on_message,
+            queue="execute_query")
 
         try:
             sys.stdout.write("Start consuming...")
