@@ -6,7 +6,7 @@ COPY requirements.txt /
 RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN groupadd -r uwsgi && useradd -r -g uwsgi uwsgi
 
-COPY cmd.sh server.py server_flask.py server_wsgi.py uwsgi.ini /
+COPY cmd.sh server.py server_development.py server_production.py /
 COPY query_executor /query_executor
 COPY test /test
 
