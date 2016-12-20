@@ -1,5 +1,7 @@
+import os
 import sys
 import time
+import traceback
 from flask import Config
 import pika
 import requests
@@ -20,6 +22,43 @@ class QueryExecutor(object):
     #         route)
 
 
+    # def emis_aggregate_query_results_uri(self,
+    #         route):
+    #     route = route.lstrip("/")
+    #     return "https://{}:{}/aggregate_query_results/{}".format(
+    #         self.config["EMIS_HOST"],
+    #         self.config["EMIS_PORT"],
+    #         route)
+
+
+    def aggregate_queries_uri(self,
+            route):
+        route = route.lstrip("/")
+        return "http://{}:{}/{}".format(
+            self.config["EMIS_AGGREGATE_QUERY_HOST"],
+            self.config["EMIS_AGGREGATE_QUERY_PORT"],
+            route)
+
+
+    def relative_result_dataset_pathname(self,
+            query):
+        # TODO Format a nice name.
+        return os.path.join(query["user"], query["id"], "query_result.csv")
+
+
+    def result_dataset_pathname(self,
+            query):
+        dataset_pathname = os.path.join(
+            self.config["EMIS_RESULT_DATA"],
+            self.relative_result_dataset_pathname(query))
+
+        # Make sure the path to the dataset exists.
+        directory_pathname = os.path.split(dataset_pathname)[0]
+        os.makedirs(directory_pathname)
+
+        return dataset_pathname
+
+
     def on_message(self,
             channel,
             method_frame,
@@ -28,9 +67,8 @@ class QueryExecutor(object):
 
         # Message passed in is the uri to the query to execute.
 
-        sys.stdout.write("received message: {}".format(body))
+        sys.stdout.write("received message: {}\n".format(body))
         sys.stdout.flush()
-
 
         try:
             # Get the query.
@@ -55,29 +93,36 @@ class QueryExecutor(object):
             query = response.json()["aggregate_query"]
 
 
-            # Mark executing query as 'executing'.
-            # print(type)
-            # print(body)
-            # print(dir(body))
-            # assert(False)
+            # Pathname of file to store result in.
+            result_pathname = self.result_dataset_pathname(query)
+            sys.stdout.write("output dataset: {}\n".format(result_pathname));
+            sys.stdout.flush()
 
 
-            # uri = self.properties_uri("properties")
-            # response = requests.post(uri, json={"property": payload})
-
-
+            # Calculate the result.
+            # TODO
             time.sleep(5)
+            open(result_pathname, "w").write(
+                "head1, head2, head3\n"
+                "1, 2, 3\n"
+                "4, 5, 6\n"
+                "7, 8, 9\n"
+            )
 
-            # # For now, post an example to the property service.
-            # payload = {
-            #     "name": "my_name1",
-            #     "pathname": "my_pathname1"
-            # }
-            # uri = self.properties_uri("properties")
-            # response = requests.post(uri, json={"property": payload})
 
-            # # TODO Handle errors.
-            # assert response.status_code == 201, response.text
+            # Store information about the result in emis_result.
+            results_uri = self.aggregate_queries_uri("aggregate_query_results")
+            payload = {
+                "id": query["id"],
+                "uri": self.relative_result_dataset_pathname(query)
+                    # self.emis_aggregate_query_results_uri(
+                    # self.relative_result_dataset_pathname(query))
+            }
+
+            response = requests.post(results_uri,
+                json={"aggregate_query_result": payload})
+
+            assert response.status_code == 201, response.text
 
 
             # Mark executing query as 'succeeded'.
@@ -88,7 +133,10 @@ class QueryExecutor(object):
 
             assert response.status_code == 200, response.text
 
-        except Exception:
+        except Exception as exception:
+
+            sys.stdout.write("{}\n".format(traceback.format_exc(exception)));
+            sys.stdout.flush()
 
             # Mark executing query as 'failed'.
             payload = {
@@ -97,6 +145,8 @@ class QueryExecutor(object):
             response = requests.patch(uri, json=payload)
 
             assert response.status_code == 200, response.text
+
+            # TODO Post an error message somewhere.
 
 
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
@@ -125,13 +175,13 @@ class QueryExecutor(object):
             queue="execute_query")
 
         try:
-            sys.stdout.write("Start consuming...")
+            sys.stdout.write("Start consuming...\n")
             sys.stdout.flush()
             self.channel.start_consuming()
         except KeyboardInterrupt:
             self.channel.stop_consuming()
 
-        sys.stdout.write("Close connection...")
+        sys.stdout.write("Close connection...\n")
         sys.stdout.flush()
         self.connection.close()
 
