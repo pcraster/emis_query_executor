@@ -135,8 +135,8 @@ class QueryExecutor(object):
 
         except Exception as exception:
 
-            sys.stdout.write("{}\n".format(traceback.format_exc(exception)));
-            sys.stdout.flush()
+            sys.stderr.write("{}\n".format(traceback.format_exc(exception)));
+            sys.stderr.flush()
 
             # Mark executing query as 'failed'.
             payload = {
@@ -145,8 +145,6 @@ class QueryExecutor(object):
             response = requests.patch(uri, json=payload)
 
             assert response.status_code == 200, response.text
-
-            # TODO Post an error message somewhere.
 
 
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
