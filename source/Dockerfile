@@ -8,7 +8,7 @@ RUN set -x && \
         libhdf5-dev && \
     rm -fr /var/lib/apt/lists/* && \
     cd /opt && \
-    wget https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz && \
+    wget --progress=bar:force https://cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz && \
     tar zxf cmake-3.5.2-Linux-x86_64.tar.gz && \
     ln -s cmake-3.5.2-Linux-x86_64 cmake && \
     export PATH="/opt/cmake/bin:$PATH" && \
@@ -18,7 +18,7 @@ RUN set -x && \
         -Dpeacock_prefix=/usr/local \
         -Dbuild_boost=true -Dboost_version=1.57.0 \
             -Dboost_build_boost_test=TRUE \
-        -Dbuild_pybind11=true -Dpybind11_version=1.8.0 \
+        -Dbuild_pybind11=true -Dpybind11_version=1.8.1 \
         /tmp/peacock && \
     cmake --build /tmp/build --target all && \
     rm -fr /tmp/build
