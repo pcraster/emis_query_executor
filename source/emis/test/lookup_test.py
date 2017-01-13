@@ -10,22 +10,28 @@ class CoordinateLookup(unittest.TestCase):
 
     def test_01(self):
         """ Output CVS file already exists """
+        out_name = os.path.join(os.path.dirname(__file__), "data",
+            "cohort1.csv")
+
         with self.assertRaisesRegexp(
-                ValueError, "Designated output file 'data/cohort1.csv' already exists"):
-            out_name = os.path.join("data", "cohort1.csv")
+                ValueError,
+                "Designated output file '{}' already exists".format(
+                    out_name)):
             emis.aggregate._lookup._check_csv_output(out_name)
 
     def test_02(self):
         """  No write permissions to create the output file """
         with self.assertRaisesRegexp(
-                ValueError, "No write permissions for output file '/cohort1.csv'"):
+                ValueError,
+                "No write permissions for output file '/cohort1.csv'"):
             out_name = os.path.join("/", "cohort1.csv")
             emis.aggregate._lookup._check_csv_output(out_name)
 
     def test_03(self):
         """ No exposomes given """
         with self.assertRaisesRegexp(ValueError, "No exposomes provided"):
-            in_name = os.path.join("data", "cohort1.csv")
+            in_name = os.path.join(os.path.dirname(__file__), "data",
+                "cohort1.csv")
             out_name = os.path.join("/", "tmp", "cohort1_out.csv")
             if os.path.exists(out_name):
                 os.remove(out_name)
