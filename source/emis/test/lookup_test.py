@@ -3,7 +3,7 @@ import sys
 import os
 # TODO
 sys.path.append("../../")
-import emis
+import emis.aggregate
 
 
 class CoordinateLookup(unittest.TestCase):
@@ -13,14 +13,14 @@ class CoordinateLookup(unittest.TestCase):
         with self.assertRaisesRegexp(
                 ValueError, "Designated output file 'data/cohort1.csv' already exists"):
             out_name = os.path.join("data", "cohort1.csv")
-            emis._lookup._check_csv_output(out_name)
+            emis.aggregate._lookup._check_csv_output(out_name)
 
     def test_02(self):
         """  No write permissions to create the output file """
         with self.assertRaisesRegexp(
                 ValueError, "No write permissions for output file '/cohort1.csv'"):
             out_name = os.path.join("/", "cohort1.csv")
-            emis._lookup._check_csv_output(out_name)
+            emis.aggregate._lookup._check_csv_output(out_name)
 
     def test_03(self):
         """ No exposomes given """
@@ -29,7 +29,7 @@ class CoordinateLookup(unittest.TestCase):
             out_name = os.path.join("/", "tmp", "cohort1_out.csv")
             if os.path.exists(out_name):
                 os.remove(out_name)
-            emis.coordinate_lookup(in_name, out_name, [])
+            emis.aggregate.coordinate_lookup(in_name, out_name, [])
 
     #def test_04(self):
         #""" Just an usage example """
