@@ -1,9 +1,9 @@
 import os
 import csv
 import h5py
-import _check_csv
-import _lue_db
-import _cohort
+from ._check_csv import validate_location_input
+from ._lue_db import QueryLUE
+from ._cohort import Cohorts
 
 
 def _check_csv_output(csv_outputname):
@@ -53,7 +53,7 @@ def coordinate_lookup(csv_inputname, csv_outputname, exposome_paths):
     """
 
     # First do some basic tests wrt input and output arguments
-    _check_csv.validate_location_input(csv_inputname)
+    validate_location_input(csv_inputname)
     _check_csv_output(csv_outputname)
     _check_exposomes(exposome_paths)
 
@@ -66,12 +66,12 @@ def coordinate_lookup(csv_inputname, csv_outputname, exposome_paths):
     phenomenon_name = exposomes[0]
     property_set_name = "areas"
     property_name = "band_1"
-    _lue = _lue_db.QueryLUE(
+    _lue = QueryLUE(
         exposome_paths[0], phenomenon_name, property_set_name, property_name)
 
     # Temporary structure holding coordinate and exposome value information
     header = "id,{}\n".format(",".join(exposomes))
-    _output = _cohort.Cohorts(header)
+    _output = Cohorts(header)
 
     # First, we transform for all rows/locations the coordinates to array
     # indices

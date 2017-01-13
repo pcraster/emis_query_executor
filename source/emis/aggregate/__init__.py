@@ -1,1 +1,1 @@
-from _lookup import *
+from ._lookup import *
