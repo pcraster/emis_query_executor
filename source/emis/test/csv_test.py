@@ -11,7 +11,7 @@ class CSVInputFileTestCase(unittest.TestCase):
 
     def test_01(self):
         """ Input CVS file does not exist """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "Input location cohort csv file 'not_there.csv' "
                     "does not exist"):
@@ -22,7 +22,7 @@ class CSVInputFileTestCase(unittest.TestCase):
         in_name = os.path.join(os.path.dirname(__file__), "data",
             "cohort2.csv")
 
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "Input file '{}' does not appear to have a header".format(
                     in_name)):
@@ -30,7 +30,7 @@ class CSVInputFileTestCase(unittest.TestCase):
 
     def test_03(self):
         """  String value in column """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 RuntimeError,
                 "Incorrect longitude value in row 6 \('none'\)"):
             in_name = os.path.join(os.path.dirname(__file__), "data",
@@ -39,7 +39,7 @@ class CSVInputFileTestCase(unittest.TestCase):
 
     def test_04(self):
         """  Empty coordinate value """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 RuntimeError, "Incorrect latitude value in row 7 \(''\)"):
             in_name = os.path.join(os.path.dirname(__file__), "data",
                 "cohort4.csv")
@@ -56,14 +56,14 @@ class CSVInputFileTestCase(unittest.TestCase):
         in_name = os.path.join(os.path.dirname(__file__), "data",
             "cohort6.csv")
 
-        with self.assertRaisesRegexp(ValueError,
+        with self.assertRaisesRegex(ValueError,
                 "Delimiter of input file '{}' is ';' and not ','".format(
                     in_name)):
             emis.aggregate._check_csv.validate_location_input(in_name)
 
     def test_07(self):
         """  Not enough columns given """
-        with self.assertRaisesRegexp(RuntimeError,
+        with self.assertRaisesRegex(RuntimeError,
                 "Value not provided for longitude in row 10"):
             in_name = os.path.join(os.path.dirname(__file__), "data",
                 "cohort7.csv")
@@ -71,10 +71,13 @@ class CSVInputFileTestCase(unittest.TestCase):
 
     def test_08(self):
         """  Not a CSV file """
-        with self.assertRaisesRegexp(csv.Error,
-                "Could not determine delimiter"):
-            in_name = os.path.join(os.path.dirname(__file__), "data",
-                "cohort1.xlsx")
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+            "cohort1.xlsx")
+
+        with self.assertRaisesRegex(RuntimeError,
+                "Input file '{}' does not seem to be a CSV file".format(
+               # "Delimiter of input file '{}' is ';' and not ','".format(
+                    in_name)):
             emis.aggregate._check_csv.validate_location_input(in_name)
 
 

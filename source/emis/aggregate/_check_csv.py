@@ -1,5 +1,6 @@
 import os
 import csv
+import mimetypes
 
 
 def validate_location_input(filename):
@@ -14,6 +15,12 @@ def validate_location_input(filename):
         msg = "Input location cohort csv file '{}' does not exist".format(
             filename)
         raise ValueError(msg)
+
+    ftype, fenc = mimetypes.guess_type(filename)
+    if ftype != "text/csv":
+        msg = "Input file '{}' does not seem to be a CSV file".format(
+            filename)
+        raise RuntimeError(msg)
 
     with open(filename) as csvfile:
         sample = csvfile.read(1024)
