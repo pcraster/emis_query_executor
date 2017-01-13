@@ -13,7 +13,7 @@ class CoordinateLookup(unittest.TestCase):
         out_name = os.path.join(os.path.dirname(__file__), "data",
             "cohort1.csv")
 
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "Designated output file '{}' already exists".format(
                     out_name)):
@@ -21,7 +21,7 @@ class CoordinateLookup(unittest.TestCase):
 
     def test_02(self):
         """  No write permissions to create the output file """
-        with self.assertRaisesRegexp(
+        with self.assertRaisesRegex(
                 ValueError,
                 "No write permissions for output file '/cohort1.csv'"):
             out_name = os.path.join("/", "cohort1.csv")
@@ -29,7 +29,7 @@ class CoordinateLookup(unittest.TestCase):
 
     def test_03(self):
         """ No exposomes given """
-        with self.assertRaisesRegexp(ValueError, "No exposomes provided"):
+        with self.assertRaisesRegex(ValueError, "No exposomes provided"):
             in_name = os.path.join(os.path.dirname(__file__), "data",
                 "cohort1.csv")
             out_name = os.path.join("/", "tmp", "cohort1_out.csv")
