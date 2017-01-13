@@ -1,5 +1,5 @@
 import unittest
-from query_executor import create_app
+from emis_query_executor import create_app
 
 
 class AppTest(unittest.TestCase):
