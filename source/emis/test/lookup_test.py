@@ -12,6 +12,9 @@ import emis.aggregate
 
 class CoordinateLookup(unittest.TestCase):
 
+    if sys.version_info[0] == 2:
+        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
     def test_01(self):
         """ Output CVS file already exists """
         out_name = os.path.join(os.path.dirname(__file__), "data",

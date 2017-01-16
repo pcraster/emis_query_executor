@@ -9,6 +9,9 @@ import emis.aggregate
 
 class CSVInputFileTestCase(unittest.TestCase):
 
+    if sys.version_info[0] == 2:
+        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+
     def test_01(self):
         """ Input CVS file does not exist """
         with self.assertRaisesRegex(
