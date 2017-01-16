@@ -2,7 +2,6 @@ import datetime
 import json
 import os
 import sys
-import time
 import traceback
 from flask import Config
 import pika
@@ -196,19 +195,9 @@ class QueryExecutor(object):
                 # Pathname of file to store result in.
                 result_pathname = self.result_dataset_pathname(query)
 
-                # coordinate_lookup(
-                #     domain_pathname, result_pathname, property_pathnames)
-
                 # Calculate the result.
-                # TODO
-                time.sleep(5)
-                open(result_pathname, "w").write(
-                    "head1, head2, head3\n"
-                    "1, 2, 3\n"
-                    "4, 5, 6\n"
-                    "7, 8, 9\n"
-                )
-
+                coordinate_lookup(
+                    domain_pathname, result_pathname, property_pathnames)
 
                 # Store information about the result in emis_result.
                 results_uri = self.aggregate_queries_uri(
