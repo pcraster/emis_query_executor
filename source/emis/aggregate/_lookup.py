@@ -30,7 +30,7 @@ def _check_exposomes(exposome_paths):
         msg = "No exposomes provided"
         raise ValueError(msg)
 
-    for lue_filename in exposome_paths:
+    for lue_filename, prop_path in exposome_paths:
         if not os.path.exists(lue_filename):
             msg = "Input database '{}' does not exist".format(lue_filename)
             raise ValueError(msg)
@@ -39,8 +39,8 @@ def _check_exposomes(exposome_paths):
 def _exposome_property_names(exposome_paths):
     variables = []
 
-    for path in exposome_paths:
-        head, tail = os.path.split(path)
+    for fs_path, p_path in exposome_paths:
+        head, tail = os.path.split(fs_path)
         varname, ext = os.path.splitext(tail)
         variables.append(varname)
 
@@ -66,8 +66,9 @@ def coordinate_lookup(csv_inputname, csv_outputname, exposome_paths):
     phenomenon_name = exposomes[0]
     property_set_name = "areas"
     property_name = "band_1"
+
     _lue = QueryLUE(
-        exposome_paths[0], phenomenon_name, property_set_name, property_name)
+        exposome_paths[0][0], phenomenon_name, property_set_name, property_name)
 
     # Temporary structure holding coordinate and exposome value information
     header = "id,{}\n".format(",".join(exposomes))
@@ -91,7 +92,7 @@ def coordinate_lookup(csv_inputname, csv_outputname, exposome_paths):
         lue_prop_str = _lue.get_values_path(exposome)
 
         # Read whole array for current exposome
-        lue_db = h5py.File(exposome_paths[idx], "r")
+        lue_db = h5py.File(exposome_paths[idx][0], "r")
         raster = lue_db.get(lue_prop_str)[...]
 
         # Lookup values
