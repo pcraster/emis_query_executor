@@ -36,6 +36,16 @@ def validate_location_input(filename):
                 filename, dialect.delimiter)
             raise ValueError(msg)
 
+    with open(filename) as csvfile:
+        max_records = 2500
+        reader = csv.reader(csvfile)
+        nr_rows = len(list(reader)) - 1  # records w/o header
+
+        if nr_rows > max_records:
+            msg = "Number of rows ({}) in '{}' exceeds the row limit ({})".format(
+                nr_rows, filename, max_records)
+            raise ValueError(msg)
+
     # Basically, iterate over rows and try data conversion and see where it
     # fails
     with open(filename) as csvfile:
