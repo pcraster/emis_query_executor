@@ -43,7 +43,8 @@ class CoordinateLookup(unittest.TestCase):
 
     def test_04(self):
         """ An usage example """
-        in_name = os.path.join("data", "cohort1.csv")
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+                "cohort1.csv")
         tmp_dir = tempfile.mkdtemp(prefix="emis_aggregate_")
         out_name = os.path.join(tmp_dir, "cohort1_out.csv")
 
