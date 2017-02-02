@@ -5,8 +5,8 @@ import tempfile
 class Configuration:
 
     # EMIS_HOST = "emis"
-    EMIS_AGGREGATE_QUERY_HOST = "aggregate_query"
-    EMIS_DOMAIN_HOST = "domain"
+    EMIS_AGGREGATE_QUERY_HOST = "emis_aggregate_query"
+    EMIS_DOMAIN_HOST = "emis_domain"
     EMIS_PROPERTY_HOST = "property"
     EMIS_RESULT_DATA = \
         os.environ.get("EMIS_RESULT_DATA") or \
