@@ -121,6 +121,38 @@ class QueryExecutor(object):
         return dataset_pathname
 
 
+    def handle_error(self,
+            query_uri,
+            query_id,
+            message):
+
+        self.log("calculation failed\n{}".format(
+                traceback.format_exc()),
+            priority="high", severity="critical")
+
+        # Mark executing query as 'failed'.
+        payload = {
+            "execute_status": "failed"
+        }
+        response = requests.patch(query_uri, json=payload)
+
+        assert response.status_code == 200, response.text
+
+
+        # Post error message for the client.
+        messages_uri = self.aggregate_queries_uri(
+            "aggregate_query_messages")
+        payload = {
+            "id": query_id,
+            "message": message,
+        }
+
+        response = requests.post(messages_uri,
+            json={"aggregate_query_message": payload})
+
+        assert response.status_code == 201, response.text
+
+
     def on_message(self,
             channel,
             method_frame,
@@ -133,8 +165,8 @@ class QueryExecutor(object):
 
         try:
             # Get the query.
-            uri = body
-            response = requests.get(uri)
+            query_uri = body
+            response = requests.get(query_uri)
 
             assert response.status_code == 200, response.text
 
@@ -164,7 +196,7 @@ class QueryExecutor(object):
                 payload = {
                     "execute_status": "executing"
                 }
-                response = requests.patch(uri, json=payload)
+                response = requests.patch(query_uri, json=payload)
 
                 assert response.status_code == 200, response.text
 
@@ -219,26 +251,19 @@ class QueryExecutor(object):
                 payload = {
                     "execute_status": "succeeded"
                 }
-                response = requests.patch(uri, json=payload)
+                response = requests.patch(query_uri, json=payload)
 
                 assert response.status_code == 200, response.text
 
                 self.log("calculation succeeded")
 
+        except RuntimeError as exception:
+            error_message = str(exception)
+            self.handle_error(query_uri, query["id"], error_message)
+
         except Exception as exception:
-
-            self.log("calculation failed\n{}".format(
-                    traceback.format_exc()),
-                priority="high", severity="critical")
-
-            # Mark executing query as 'failed'.
-            payload = {
-                "execute_status": "failed"
-            }
-            response = requests.patch(uri, json=payload)
-
-            assert response.status_code == 200, response.text
-
+            error_message = "Something went wrong. Please try again later."
+            self.handle_error(query_uri, query["id"], error_message)
 
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
