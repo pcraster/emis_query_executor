@@ -7,7 +7,7 @@ class Configuration:
     # EMIS_HOST = "emis"
     EMIS_AGGREGATE_QUERY_HOST = "emis_aggregate_query"
     EMIS_DOMAIN_HOST = "emis_domain"
-    EMIS_PROPERTY_HOST = "property"
+    EMIS_PROPERTY_HOST = "emis_property"
     EMIS_RESULT_DATA = \
         os.environ.get("EMIS_RESULT_DATA") or \
         tempfile.gettempdir()
@@ -30,7 +30,7 @@ class DevelopmentConfiguration(Configuration):
     EMIS_PROPERTY_PORT = 5000
 
 
-class TestingConfiguration(Configuration):
+class TestConfiguration(Configuration):
 
     # EMIS_PORT = 5000
     EMIS_AGGREGATE_QUERY_PORT = 5000
@@ -48,6 +48,7 @@ class ProductionConfiguration(Configuration):
 
 configuration = {
     "development": DevelopmentConfiguration,
-    "testing": TestingConfiguration,
+    "test": TestConfiguration,
+    "acceptance": ProductionConfiguration,
     "production": ProductionConfiguration
 }
