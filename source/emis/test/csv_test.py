@@ -15,7 +15,7 @@ class CSVInputFileTestCase(unittest.TestCase):
     def test_01(self):
         """ Input CVS file does not exist """
         with self.assertRaisesRegex(
-                ValueError,
+                Exception,
                 "Input location cohort csv file 'not_there.csv' "
                     "does not exist"):
             emis.aggregate._check_csv.validate_location_input("not_there.csv")
@@ -26,9 +26,9 @@ class CSVInputFileTestCase(unittest.TestCase):
             "cohort2.csv")
 
         with self.assertRaisesRegex(
-                ValueError,
+                RuntimeError,
                 "Input file '{}' does not appear to have a header".format(
-                    in_name)):
+                    os.path.basename(in_name))):
             emis.aggregate._check_csv.validate_location_input(in_name)
 
     def test_03(self):
@@ -59,9 +59,9 @@ class CSVInputFileTestCase(unittest.TestCase):
         in_name = os.path.join(os.path.dirname(__file__), "data",
             "cohort6.csv")
 
-        with self.assertRaisesRegex(ValueError,
+        with self.assertRaisesRegex(RuntimeError,
                 "Delimiter of input file '{}' is ';' and not ','".format(
-                    in_name)):
+                    os.path.basename(in_name))):
             emis.aggregate._check_csv.validate_location_input(in_name)
 
     def test_07(self):
@@ -79,9 +79,24 @@ class CSVInputFileTestCase(unittest.TestCase):
 
         with self.assertRaisesRegex(RuntimeError,
                 "Input file '{}' does not seem to be a CSV file".format(
-               # "Delimiter of input file '{}' is ';' and not ','".format(
-                    in_name)):
+                    os.path.basename(in_name))):
             emis.aggregate._check_csv.validate_location_input(in_name)
+
+    def test_09(self):
+        """  Empty CSV file """
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+            "empty_cohort.csv")
+        if os.path.exists(in_name):
+            os.remove(in_name)
+        with open(in_name, "w"):
+            pass
+
+        with self.assertRaisesRegex(RuntimeError,
+                "Could not determine delimiter in the input file '{}'".format(
+                    os.path.basename(in_name))):
+            emis.aggregate._check_csv.validate_location_input(in_name)
+
+
 
 
 if __name__ == "__main__":

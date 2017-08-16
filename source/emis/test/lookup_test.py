@@ -29,7 +29,7 @@ class CoordinateLookup(unittest.TestCase):
     def test_02(self):
         """  No write permissions to create the output file """
         with self.assertRaisesRegex(
-                ValueError,
+                Exception,
                 "No write permissions for output file '/cohort1.csv'"):
             out_name = os.path.join("/", "cohort1.csv")
             emis.aggregate._lookup._check_csv_output(out_name)

@@ -20,7 +20,7 @@ def _check_csv_output(csv_outputname):
     except IOError as err:
         msg = "No write permissions for output file '{}'".format(
             csv_outputname)
-        raise ValueError(msg)
+        raise Exception(msg)
 
 
 def _check_exposomes(exposome_paths):
