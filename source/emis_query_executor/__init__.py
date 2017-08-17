@@ -219,11 +219,6 @@ class QueryExecutor(object):
                         (property["pathname"], property["name"]))
 
 
-                sys.stdout.write("{}\n".format(domain_pathname))
-                sys.stdout.write("{}\n".format(property_pathnames))
-                sys.stdout.flush()
-
-
                 # Pathname of file to store result in.
                 result_pathname = self.result_dataset_pathname(query)
 
