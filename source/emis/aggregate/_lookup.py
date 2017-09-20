@@ -12,7 +12,7 @@ def _check_csv_output(csv_outputname):
     if os.path.exists(csv_outputname):
         msg = "Designated output file '{}' already exists".format(
             csv_outputname)
-        raise ValueError(msg)
+        raise Exception(msg)
 
     try:
         with open(csv_outputname, "w") as csv_out:
@@ -28,12 +28,12 @@ def _check_exposomes(exposome_paths):
     # Checks for exposomes
     if len(exposome_paths) == 0:
         msg = "No exposomes provided"
-        raise ValueError(msg)
+        raise Exception(msg)
 
     for lue_filename, prop_path in exposome_paths:
         if not os.path.exists(lue_filename):
             msg = "Input database '{}' does not exist".format(lue_filename)
-            raise ValueError(msg)
+            raise Exception(msg)
 
 
 def _exposome_property_names(exposome_paths):

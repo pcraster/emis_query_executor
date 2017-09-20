@@ -26,6 +26,10 @@ def validate_location_input(filename):
         try:
             sample = csvfile.read(1024)
             dialect = csv.Sniffer().sniff(sample)
+        except UnicodeDecodeError as err:
+            msg = "Input file '{}' contains invalid UTF-8 characters".format(
+                os.path.basename(filename))
+            raise RuntimeError(msg)
         except csv.Error as msg:
             msg = "{} in the input file '{}'".format(msg,
                 os.path.basename(filename))
@@ -44,7 +48,9 @@ def validate_location_input(filename):
     # Basically, iterate over rows and try data conversion and see where it
     # fails
     with open(filename) as csvfile:
-        reader = csv.DictReader(csvfile)
+        # Remove potentially present whitespace in header row
+        header = [col_name.strip() for col_name in next(csvfile).split(",")]
+        reader = csv.DictReader(csvfile, fieldnames=header)
         row_nr = 1    # Row number in user format
         try:
             for row in reader:

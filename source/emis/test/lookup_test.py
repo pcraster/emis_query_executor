@@ -13,7 +13,7 @@ import emis.aggregate
 class CoordinateLookup(unittest.TestCase):
 
     if sys.version_info[0] == 2:
-        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+        raise RuntimeError("Python 3 required")
 
     def test_01(self):
         """ Output CVS file already exists """
@@ -21,7 +21,7 @@ class CoordinateLookup(unittest.TestCase):
             "cohort1.csv")
 
         with self.assertRaisesRegex(
-                ValueError,
+                Exception,
                 "Designated output file '{}' already exists".format(
                     out_name)):
             emis.aggregate._lookup._check_csv_output(out_name)
@@ -36,7 +36,7 @@ class CoordinateLookup(unittest.TestCase):
 
     def test_03(self):
         """ No exposomes given """
-        with self.assertRaisesRegex(ValueError, "No exposomes provided"):
+        with self.assertRaisesRegex(Exception, "No exposomes provided"):
             in_name = os.path.join(os.path.dirname(__file__), "data",
                 "cohort1.csv")
             out_name = os.path.join("/", "tmp", "cohort1_out.csv")

@@ -10,7 +10,7 @@ import emis.aggregate
 class CSVInputFileTestCase(unittest.TestCase):
 
     if sys.version_info[0] == 2:
-        assertRaisesRegex = unittest.TestCase.assertRaisesRegexp
+        raise RuntimeError("Python 3 required")
 
     def test_01(self):
         """ Input CVS file does not exist """
@@ -97,6 +97,23 @@ class CSVInputFileTestCase(unittest.TestCase):
             emis.aggregate._check_csv.validate_location_input(in_name)
 
 
+    def test_10(self):
+        """  Spaces in header """
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+            "cohort10.csv")
+
+        emis.aggregate._check_csv.validate_location_input(in_name)
+
+
+    def test_11(self):
+        """ Unicode  """
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+            "cohort11.csv")
+
+        with self.assertRaisesRegex(RuntimeError,
+                "Input file '{}' contains invalid UTF-8 characters".format(
+                    os.path.basename(in_name))):
+            emis.aggregate._check_csv.validate_location_input(in_name)
 
 
 if __name__ == "__main__":
