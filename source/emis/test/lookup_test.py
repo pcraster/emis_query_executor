@@ -85,5 +85,20 @@ class CoordinateLookup(unittest.TestCase):
 
         shutil.rmtree(tmp_dir)
 
+    def test_05(self):
+        """ Coordinates at map extent borders """
+        in_name = os.path.join(os.path.dirname(__file__), "data",
+            "lookup05.csv")
+        out_name = os.path.join("/", "tmp", "lookup05_out.csv")
+
+        if os.path.exists(out_name):
+            os.remove(out_name)
+
+        fname = os.path.join(os.path.dirname(__file__), "data",
+                "NO2_100.lue")
+        pname = "/lue_phenomena/NO2_100/lue_property_sets/areas/lue_properties/band_1"
+        exposomes = [(fname, pname)]
+        emis.aggregate.coordinate_lookup(in_name, out_name, exposomes)
+
 if __name__ == "__main__":
     unittest.main()

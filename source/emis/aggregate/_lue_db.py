@@ -119,11 +119,11 @@ class QueryLUE(object):
         # In case the user provided some coordinates outside the map extent
         # return error value atm
         # fttb we'll check for -1 later on
-        if row_idx < 0 or row_idx > nr_rows:
+        if row_idx < 0 or row_idx >= nr_rows:
             col_idx = -1
             row_idx = -1
 
-        if col_idx < 0 or col_idx > nr_cols:
+        if col_idx < 0 or col_idx >= nr_cols:
             col_idx = -1
             row_idx = -1
 
